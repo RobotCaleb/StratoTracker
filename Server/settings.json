@@ -1,0 +1,11 @@
+{
+	"DBUSER"       : "user",
+	"DBPASS"       : "pass",
+	"DBHOST"       : "localhost",
+	"DBPORT"       : 27017,
+	"DBDB"         : "tracker",
+	"DBCOLLECTION" : "updates",
+	"PORT_WWW"     : 8080,
+	"UPLOAD_USER"  : "user",
+	"UPLOAD_PASS"  : "pass"
+}

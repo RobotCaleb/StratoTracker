@@ -1,0 +1,97 @@
+@import url(http://fonts.googleapis.com/css?family=Marmelad);
+
+body {
+	background-image     : url(/images/graphy.png);
+	background-attachment: fixed;
+	font-family          : 'Marmelad', sans-serif;
+	font-variant: small-caps;
+	font-size: 15;
+}
+
+#header {
+	color         : CCCCCC;
+	width         : 800px;
+	padding-top   : 0px;
+	padding-bottom: 25px;
+}
+
+a {
+	font-weight: bold;
+	color: #B13E3D;      
+}
+
+a:visited {
+	color: #595959;      
+}
+
+.fullImage {
+	float: right;
+}
+
+.container {
+	overflow        : auto;
+	width           : 996px;
+	margin-top      : 20px;
+	margin-left     : auto;
+	margin-right    : auto;
+	padding         : 15px;
+	border-radius   : 40px;
+	border          : 5px solid #111;
+	background-image: url(/images/carbon_fibre.png);
+	text-align      : center;
+
+	behavior        : url(/css/ie-css3.htc);
+	position        : relative;
+}
+
+.thumb {
+	display      : block;
+	border-radius: 5px;
+	border       : 1px solid #800000;
+	margin-left  : auto;
+	margin-right : auto;
+
+	behavior     : url(/css/ie-css3.htc);
+	position     : relative;
+}
+
+.box {
+	height          : 360px;
+	width           : 300px;
+	background-image: url(/images/light_wool.png);
+	float           : left;
+	margin          : 10px;
+	border-radius   : 10px;
+	border          : 1px solid #800000;
+	padding         : 5px;
+
+	behavior        : url(/css/ie-css3.htc);
+	position        : relative;
+}
+
+.caption {
+	font-variant: small-caps;
+	text-align  : center;
+}
+
+.map {
+	position   : absolute;
+	bottom     : 0px;
+	margin-left: 5px;
+}
+
+.taken {
+	font-size   : 75%;
+	margin-top  : -3px;
+	margin-right: 5px;
+	float       : right;
+	position    : relative;
+}
+
+.posted {
+	font-size  : 75%;
+	margin-top : -3px;
+	margin-left: 5px;
+	float      : left;
+	position   : relative;
+}

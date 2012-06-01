@@ -1,0 +1,202 @@
+mongojs = require 'mongojs'
+express = require 'express'
+form    = require 'connect-form/lib/connect-form.js'
+im      = require 'imagemagick'
+path    = require 'path'
+fs      = require 'fs'
+io      = require 'socket.io'
+
+localSettingsFile = '/settings.json'
+if path.existsSync __dirname + localSettingsFile
+	settings = JSON.parse fs.readFileSync __dirname + localSettingsFile, 'utf-8'
+else
+	console.log "Can't find local settings at %s", localSettingsFile
+	return 1
+
+envFile = '/home/dotcloud/environment.json'
+if path.existsSync envFile
+	console.log "dotcloud config exists"
+	env                      = JSON.parse fs.readFileSync envFile, 'utf-8'
+	env.PRESERVE_HOME        = '/home/dotcloud/data'
+	env.PRESERVE_HOME_IMAGES = env.PRESERVE_HOME + "/images"
+	env.DBHOST               = env.DOTCLOUD_DATA_MONGODB_HOST
+	env.DBPORT               = env.DOTCLOUD_DATA_MONGODB_PORT
+
+	if path.existsSync env.PRESERVE_HOME + localSettingsFile
+		settings = JSON.parse fs.readFileSync env.PRESERVE_HOME + "/" + localSettingsFile
+	else
+		fs.writeFileSync env.PRESERVE_HOME + localSettingsFile, fs.readFileSync __dirname + localSettingsFile
+		console.log "dotcloud local settings didn't exist in preserve home. Wrote there. Please update."
+		return 1
+else
+	console.log "dotcloud config does not exist, running in standalone"
+	env = {
+		DBHOST               : settings.DBHOST,
+		DBPORT               : settings.DBPORT,
+		PORT_WWW             : settings.PORT_WWW,
+		PRESERVE_HOME        : './',
+		PRESERVE_HOME_IMAGES : './images'
+	}
+
+env.DBUSER       = settings.DBUSER
+env.DBPASS       = settings.DBPASS
+env.DBDB         = settings.DBDB
+env.DBCOLLECTION = settings.DBCOLLECTION
+env.UPLOAD_USER  = settings.UPLOAD_USER
+env.UPLOAD_PASS  = settings.UPLOAD_PASS
+
+db = mongojs.connect env.DBHOST + ":" + env.DBPORT + "/" + env.DBDB
+
+db.authenticate env.DBUSER, env.DBPASS, (err, success) ->
+		console.log "Checking if logged in"
+		console.log err if err
+		console.log "Logged in" if success
+
+mycollection = db.collection env.DBCOLLECTION
+server       = express.createServer(form "keepExtensions": true)
+webroot      = __dirname + '/www'
+
+if not path.existsSync env.PRESERVE_HOME
+	fs.mkdirSync env.PRESERVE_HOME, 755
+if not path.existsSync env.PRESERVE_HOME_IMAGES
+	fs.mkdirSync env.PRESERVE_HOME_IMAGES, 755
+
+io = io.listen server
+
+io.set 'log level', 1
+
+io.sockets.on 'connection', (socket) ->
+	sendInsertions 0, socket
+
+auth = express.basicAuth env.UPLOAD_USER, env.UPLOAD_PASS
+server.get '/upload.html', auth, (req, res) ->
+  res.sendfile webroot + 'upload.html'
+
+server.use express.static(webroot)
+
+console.log "Starting to listen on %s", env.PORT_WWW
+server.listen env.PORT_WWW
+
+server.get('/images/:id', (req, res) ->
+	filename = env.PRESERVE_HOME_IMAGES + "/" + req.params.id
+	res.contentType(filename)
+	res.sendfile(filename)
+	)
+
+server.post('/image/upload', (req, res, next) ->
+	req.form.complete((err, fields, files) ->
+		if err
+			next err
+		else
+			if files && files.image && files.image.type && 0 == files.image.type.indexOf('image')
+				dir   = path.dirname files.image.path
+				ext   = path.extname files.image.path
+				base  = path.basename files.image.path, ext
+				full  = env.PRESERVE_HOME_IMAGES + "/" + base + "-full" + ext
+				thumb = env.PRESERVE_HOME_IMAGES + "/" + base + "-th" + ext
+				sized = env.PRESERVE_HOME_IMAGES + "/" + base + ext
+
+				console.log "Found an image in files.image.path: %s", files.image.path
+				console.log "full: %s", full
+				console.log "sized: %s", sized
+				console.log "thumb: %s", thumb
+				fs.writeFileSync full, fs.readFileSync files.image.path
+				fs.unlink files.image.path
+
+				im.resize {
+					srcPath : full,
+					dstPath : sized,
+					width : 800
+				}, (err, stdout, stderr) ->
+					res.send Error: "Error in first resize" if err
+					im.resize {
+						srcPath : full,
+						dstPath : thumb
+						width   : 256
+						}, (err, stdout, stderr) ->
+							res.send Error: "Error in second resize" if err
+							im.readMetadata full, (err, metadata) ->
+								res.send Error: "Error reading metadata" if err
+
+								taken = new Date().toUTCString()
+								if metadata.exif
+									if metadata.exif.gpsLatitude
+										lat = metadata.exif.gpsLatitude.split(',')
+										deg = eval lat[0]
+										min = eval lat[1]
+										sec = eval lat[2]
+
+										dd = deg + min / 60 + sec / 3600
+										if metadata.exif.gpsLatitudeRef == 'S'
+											dd *= -1
+										fields.lat = dd
+
+									if metadata.exif.gpsLongitude
+										lon = metadata.exif.gpsLongitude.split(',')
+										deg = eval lon[0]
+										min = eval lon[1]
+										sec = eval lon[2]
+
+										dd = deg + min / 60 + sec / 3600
+										if metadata.exif.gpsLongitudeRef == 'W'
+											dd *= -1
+										fields.lon = dd
+
+									if metadata.exif.dateTimeOriginal
+										taken = new Date(metadata.exif.dateTimeOriginal).toUTCString()
+
+								im.identify ['-format', '%wx%h', thumb], (err, features) ->
+									res.send Error: "Error running identify" if err
+									dim = features.split 'x'
+									width = dim[0]
+									height = dim[1]
+
+									saveImageData fields.caption,
+										fields.lat,
+										fields.lon,
+										taken,
+										base,
+										width,
+										height,
+										ext
+
+									res.send Result: "Success"
+			else
+				res.send Error: "Not an image"
+		)
+	)
+
+saveImageData = (caption, lat, lon, taken, image, width, height, ext) ->
+	now = new Date(new Date().toUTCString())
+	created = Date.UTC(
+		now.getUTCFullYear(),
+		now.getUTCMonth(),
+		now.getUTCDate(),
+		now.getUTCHours(),
+		now.getUTCMinutes(),
+		now.getUTCSeconds(),
+		now.getUTCMilliseconds())
+
+	mycollection.insert {
+		caption : caption,
+		lat     : lat,
+		lon     : lon,
+		taken   : taken,
+		image   : image,
+		thumbw  : width,
+		thumbh  : height,
+		ext     : ext,
+		created : created
+	}, insertCallback
+
+insertCallback = (err, doc) ->
+	throw err if err
+	broadcastInsertions doc
+
+sendInsertions = (date, socket) ->
+	mycollection.find({created:{$gt:date}}).sort(created:1, (err, results) ->
+		socket.emit 'firstupdate', results
+	)
+
+broadcastInsertions = (data) ->
+	io.sockets.emit 'update', data

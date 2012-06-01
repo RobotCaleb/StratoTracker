@@ -1,0 +1,10 @@
+www:
+  type: custom
+  buildscript: nodejs/builder
+  ports:
+    www: http
+  process: node server.js
+  approot: Server
+  node_version: v0.6.18
+data:
+    type: mongodb
