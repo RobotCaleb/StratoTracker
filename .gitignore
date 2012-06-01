@@ -1,6 +1,7 @@
 */node_modules/**/*
 Server/images
 *.sublime-workspace
+npm-debug.log
 
 #################
 ## Eclipse
