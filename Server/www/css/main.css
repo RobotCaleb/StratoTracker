@@ -6,10 +6,10 @@ body {
 	font-family          : 'Marmelad', sans-serif;
 	font-variant: small-caps;
 	font-size: 15;
+	color                : #CCC;
 }
 
 #header {
-	color         : CCCCCC;
 	width         : 800px;
 	padding-top   : 0px;
 	padding-bottom: 25px;
@@ -26,6 +26,27 @@ a:visited {
 
 .fullImage {
 	float: right;
+}
+
+.mapcontainer {
+	overflow        : auto;
+	width           : 996px;
+	height          : 100%;
+	margin-top      : 20px;
+	margin-left     : auto;
+	margin-right    : auto;
+	border-radius   : 40px;
+	border          : 5px solid #111;
+	background-image: url(/images/carbon_fibre.png);
+	text-align      : center;
+	padding: 20px;
+
+	behavior        : url(/css/ie-css3.htc);
+}
+
+#map_canvas {
+	height: 600px;
+	width: 100%;
 }
 
 .container {
