@@ -1,3 +1,3 @@
 #!/bin/sh
-cpan install Ham::APRS::FAP
-cpan install JSON::XS
+cpanm Ham::APRS::FAP
+cpanm JSON::XS
