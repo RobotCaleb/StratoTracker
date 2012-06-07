@@ -1,0 +1,1 @@
+supervisor -w server.js,aprsparser.js,logEntry.js -n -- server.js

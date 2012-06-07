@@ -1,11 +1,15 @@
-mongojs = require 'mongojs'
-express = require 'express'
-form    = require 'connect-form/lib/connect-form.js'
-im      = require 'imagemagick'
-path    = require 'path'
-fs      = require 'fs'
-io      = require 'socket.io'
-
+dgram             = require 'dgram'
+net               = require 'net'
+aprsparser        = require './aprsparser'
+logEntry          = require './logEntry'
+mongojs           = require 'mongojs'
+form              = require 'connect-form/lib/connect-form.js'
+im                = require 'imagemagick'
+path              = require 'path'
+fs                = require 'fs'
+io                = require 'socket.io'
+express           = require 'express'
+callsignFilter    = 'KF5PEP'
 localSettingsFile = '/settings.json'
 if path.existsSync __dirname + localSettingsFile
 	settings = JSON.parse fs.readFileSync __dirname + localSettingsFile, 'utf-8'
@@ -38,21 +42,59 @@ else
 		PRESERVE_HOME_IMAGES : './images'
 	}
 
-env.DBUSER       = settings.DBUSER
-env.DBPASS       = settings.DBPASS
-env.DBDB         = settings.DBDB
-env.DBCOLLECTION = settings.DBCOLLECTION
-env.UPLOAD_USER  = settings.UPLOAD_USER
-env.UPLOAD_PASS  = settings.UPLOAD_PASS
+env.DBUSER         = settings.DBUSER
+env.DBPASS         = settings.DBPASS
+env.DBDB           = settings.DBDB
+env.BLOGCOLLECTION = settings.BLOGCOLLECTION
+env.APRSCOLLECTION = settings.APRSCOLLECTION
+env.UPLOAD_USER    = settings.UPLOAD_USER
+env.UPLOAD_PASS    = settings.UPLOAD_PASS
 
 db = mongojs.connect env.DBHOST + ":" + env.DBPORT + "/" + env.DBDB
 
 db.authenticate env.DBUSER, env.DBPASS, (err, success) ->
 		console.log "Checking if logged in"
-		console.log err if err
+		console.log "Error: %s", err if err
 		console.log "Logged in" if success
+		process.exit if not success
 
-mycollection = db.collection env.DBCOLLECTION
+aprsCollection = db.collection env.APRSCOLLECTION
+blogCollection = db.collection env.BLOGCOLLECTION
+
+parser = new aprsparser
+
+UDP = dgram.createSocket 'udp4'
+
+udpPort = 14580
+
+UDP.bind udpPort
+
+UDP.on 'message', (msg, rinfo) ->
+	processAPRSPacket msg
+
+UDP.on 'listening', (msg, rinfo) ->
+	address = UDP.address()
+	console.log 'UDP: Listening on %s:%s', address.address, address.port
+
+TCP = net.createConnection 14580, 'texas.aprs2.net'
+
+TCP.on 'connect', () ->
+	console.log "TCP: Connected"
+	TCP.setNoDelay true
+	login = 'user KF5PEP pass -1 vers custom 0.0 UDP ' + udpPort + ' filter p/' + callsignFilter + '\n'
+	console.log 'TCP: Login %s', login
+	TCP.write login
+
+TCP.on 'data', (data) ->
+	processAPRSPacket data
+
+TCP.on 'end', () ->
+	console.log 'TCP: Disconnected'
+
+process.on 'exit', () ->
+	console.log 'Process: Exiting'
+	TCP.end()
+
 server       = express.createServer(form "keepExtensions": true)
 webroot      = __dirname + '/www'
 
@@ -62,27 +104,44 @@ if not path.existsSync env.PRESERVE_HOME_IMAGES
 	fs.mkdirSync env.PRESERVE_HOME_IMAGES, 755
 
 io = io.listen server
-
 io.set 'log level', 1
 
-io.sockets.on 'connection', (socket) ->
-	sendInsertions 0, socket
+aprsIO = io.of('/aprs').on('connection', (socket) ->
+	sendInitialAPRS socket
+	)
+
+blogIO = io.of('/blog').on('connection', (socket) ->
+	sendInitialBlogs socket
+	)
 
 auth = express.basicAuth env.UPLOAD_USER, env.UPLOAD_PASS
 server.get '/upload.html', auth, (req, res) ->
   res.sendfile webroot + 'upload.html'
+
+server.get '/drop.html', auth, (req, res) ->
+	aprsCollection.drop()
+	blogCollection.drop()
+	res.send "Collections dropped"
 
 server.use express.static(webroot)
 
 console.log "Starting to listen on %s", env.PORT_WWW
 server.listen env.PORT_WWW
 
-server.get('/images/:id', (req, res) ->
+server.get '/images/:id', (req, res) ->
 	filename = env.PRESERVE_HOME_IMAGES + "/" + req.params.id
 	res.contentType(filename)
 	res.sendfile(filename)
-	)
-
+	
+server.get '/symbol/:id', (req, res) ->
+	index = req.params.id.indexOf '-'
+	if req.params.id.substring(index + 1) == "1"
+		filename = "./www/images/slice/215.png"
+	else
+		filename = "./www/images/slice/410.png"
+	res.contentType(filename)
+	res.sendfile(filename)
+	
 server.post('/image/upload', (req, res, next) ->
 	req.form.complete((err, fields, files) ->
 		if err
@@ -177,7 +236,7 @@ saveImageData = (caption, lat, lon, taken, image, width, height, ext) ->
 		now.getUTCSeconds(),
 		now.getUTCMilliseconds())
 
-	mycollection.insert {
+	blogCollection.insert {
 		caption : caption,
 		lat     : lat,
 		lon     : lon,
@@ -191,12 +250,29 @@ saveImageData = (caption, lat, lon, taken, image, width, height, ext) ->
 
 insertCallback = (err, doc) ->
 	throw err if err
-	broadcastInsertions doc
+	broadcastBlog doc
 
-sendInsertions = (date, socket) ->
-	mycollection.find({created:{$gt:date}}).sort(created:1, (err, results) ->
+processAPRSPacket = (packet) ->
+	msg = packet.toString()
+	if msg.indexOf(callsignFilter) == 0
+		parser.decode msg, (packet) ->
+			processDecodedAPRSPacket packet
+
+processDecodedAPRSPacket = (packetData) ->
+	str = packetData.toString()
+	parsed = JSON.parse str
+	log = new logEntry parsed
+	log.postReceive aprsCollection, aprsIO
+
+sendInitialAPRS = (socket) ->
+	aprsCollection.find({timestamp:{$gt:0}}, (err, results) ->
 		socket.emit 'firstupdate', results
 	)
 
-broadcastInsertions = (data) ->
-	io.sockets.emit 'update', data
+sendInitialBlogs = (socket) ->
+	blogCollection.find({created:{$gt:0}}).sort(created:1, (err, results) ->
+		socket.emit 'firstupdate', results
+	)
+
+broadcastBlog = (data) ->
+	blogIO.emit 'update', data

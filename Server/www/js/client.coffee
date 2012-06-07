@@ -1,11 +1,10 @@
-recent = 0
 receivedFirst = false
 socket = []
 
 dateFormat.masks.dateMask = 'ddmmmyy HH:MM';
 
 $(document).ready ->
-	socket = io.connect '/'
+	socket = io.connect '/blog'
 	socket.on 'update', (data) ->
 		if data
 			fillData data
