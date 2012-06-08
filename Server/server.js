@@ -327,7 +327,7 @@
     var msg, options, packetPath, req;
     msg = packet.toString();
     if (msg.indexOf(callsignFilter) === 0) {
-      packetPath = '/packet/?packet=' + msg;
+      packetPath = '/packet?packet=' + msg;
       options = {
         host: env.DOTCLOUD_APRS_HTTP_HOST,
         port: 80,
@@ -341,9 +341,10 @@
           return processDecodedAPRSPacket(packet);
         });
       });
-      return req.on('error', function(err) {
+      req.on('error', function(err) {
         return console.log("HTTP Request Error: %s", err.message);
       });
+      return req.end();
     }
   };
 

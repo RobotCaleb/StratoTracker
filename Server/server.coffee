@@ -253,7 +253,7 @@ insertCallback = (err, doc) ->
 processAPRSPacket = (packet) ->
 	msg = packet.toString()
 	if msg.indexOf(callsignFilter) == 0
-		packetPath = '/packet/?packet=' + msg;
+		packetPath = '/packet?packet=' + msg;
 		options = {
 			host: env.DOTCLOUD_APRS_HTTP_HOST,
 			port: 80,
@@ -269,6 +269,7 @@ processAPRSPacket = (packet) ->
 				processDecodedAPRSPacket packet
 		req.on 'error', (err) ->
 			console.log "HTTP Request Error: %s", err.message
+		req.end()
 
 processDecodedAPRSPacket = (packetData) ->
 	str = packetData.toString()
