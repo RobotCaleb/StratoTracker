@@ -1,6 +1,5 @@
 dgram             = require 'dgram'
 net               = require 'net'
-aprsparser        = require './aprsparser'
 logEntry          = require './logEntry'
 mongojs           = require 'mongojs'
 form              = require 'connect-form/lib/connect-form.js'
@@ -8,6 +7,7 @@ im                = require 'imagemagick'
 path              = require 'path'
 fs                = require 'fs'
 io                = require 'socket.io'
+http              = require 'http'
 express           = require 'express'
 callsignFilter    = 'KF5PEP'
 localSettingsFile = '/settings.json'
@@ -60,8 +60,6 @@ db.authenticate env.DBUSER, env.DBPASS, (err, success) ->
 
 aprsCollection = db.collection env.APRSCOLLECTION
 blogCollection = db.collection env.BLOGCOLLECTION
-
-parser = new aprsparser
 
 UDP = dgram.createSocket 'udp4'
 
@@ -255,8 +253,17 @@ insertCallback = (err, doc) ->
 processAPRSPacket = (packet) ->
 	msg = packet.toString()
 	if msg.indexOf(callsignFilter) == 0
-		parser.decode msg, (packet) ->
-			processDecodedAPRSPacket packet
+		packetPath = '/packet/?packet=' + msg;
+		options = {
+			host: env.DOTCLOUD_APRS_HTTP_URL,
+			port: 80,
+			method: 'POST',
+			path: packetPath
+		}
+
+		req = http.request options, (res) ->
+			res.on 'data', (packet) ->
+				processDecodedAPRSPacket packet
 
 processDecodedAPRSPacket = (packetData) ->
 	str = packetData.toString()

@@ -8,6 +8,6 @@ www:
   node_version: v0.6.18
 aprs:
   type: perl
-  approot: Server
+  approot: ParseAPRS 
 data:
     type: mongodb

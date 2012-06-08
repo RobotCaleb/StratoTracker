@@ -2,7 +2,8 @@
 use ExtUtils::MakeMaker;
 WriteMakefile(
 	PREREQ_PM => {
-		'Ham::APRS::FAP' => 0,
-		'JSON::XS'       => 0
+		'Dancer'         => 1.3095,
+		'Ham::APRS::FAP' => 1.18,
+		'JSON::XS'       => 2.32
 	},
 );
