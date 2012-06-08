@@ -255,15 +255,20 @@ processAPRSPacket = (packet) ->
 	if msg.indexOf(callsignFilter) == 0
 		packetPath = '/packet/?packet=' + msg;
 		options = {
-			host: env.DOTCLOUD_APRS_HTTP_URL,
+			host: env.DOTCLOUD_APRS_HTTP_HOST,
 			port: 80,
 			method: 'POST',
 			path: packetPath
 		}
 
+		console.log "Requesting packet from perl with %s", msg
+
 		req = http.request options, (res) ->
 			res.on 'data', (packet) ->
+				console.log "Pkt from perl: %s", packet
 				processDecodedAPRSPacket packet
+		req.on 'error', (err) ->
+			console.log "HTTP Request Error: %s", err.message
 
 processDecodedAPRSPacket = (packetData) ->
 	str = packetData.toString()

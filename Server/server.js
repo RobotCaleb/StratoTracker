@@ -329,15 +329,20 @@
     if (msg.indexOf(callsignFilter) === 0) {
       packetPath = '/packet/?packet=' + msg;
       options = {
-        host: env.DOTCLOUD_APRS_HTTP_URL,
+        host: env.DOTCLOUD_APRS_HTTP_HOST,
         port: 80,
         method: 'POST',
         path: packetPath
       };
-      return req = http.request(options, function(res) {
+      console.log("Requesting packet from perl with %s", msg);
+      req = http.request(options, function(res) {
         return res.on('data', function(packet) {
+          console.log("Pkt from perl: %s", packet);
           return processDecodedAPRSPacket(packet);
         });
+      });
+      return req.on('error', function(err) {
+        return console.log("HTTP Request Error: %s", err.message);
       });
     }
   };
