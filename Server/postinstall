@@ -1,3 +1,0 @@
-#!/bin/sh
-cpanm Ham::APRS::FAP
-cpanm JSON::XS

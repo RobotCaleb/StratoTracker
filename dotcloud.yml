@@ -6,5 +6,7 @@ www:
   process: node server.js
   approot: Server
   node_version: v0.6.18
+aprs:
+  type: perl
 data:
     type: mongodb
