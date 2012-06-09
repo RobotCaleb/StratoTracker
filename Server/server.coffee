@@ -268,6 +268,9 @@ processAPRSPacket = (packet) ->
 		console.log "Requesting packet from perl with %s", msg
 
 		req = http.request options, (res) ->
+			console.log 'Status: %s', res.statusCode
+			console.log 'Headers: %j', res.headers
+			res.setEncoding 'utf8'
 			res.on 'data', (packet) ->
 				console.log "Pkt from perl: %s", packet
 				processDecodedAPRSPacket packet
