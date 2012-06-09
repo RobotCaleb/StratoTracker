@@ -327,7 +327,7 @@
     var msg, options, req;
     msg = packet.toString();
     if (msg.indexOf(callsignFilter) === 0) {
-      packet = '/packet?packet=' + encodeURIComponent(msg);
+      packet = 'packet=' + msg;
       options = {
         host: env.DOTCLOUD_APRS_HTTP_HOST,
         port: 80,
@@ -340,8 +340,6 @@
       };
       console.log("Requesting packet from perl with %s", msg);
       req = http.request(options, function(res) {
-        console.log('Status: %s', res.statusCode);
-        console.log('Headers: %j', res.headers);
         res.setEncoding('utf8');
         return res.on('data', function(packet) {
           console.log("Pkt from perl: %s", packet);
