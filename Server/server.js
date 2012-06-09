@@ -324,15 +324,19 @@
   };
 
   processAPRSPacket = function(packet) {
-    var msg, options, packetPath, req;
+    var msg, options, req;
     msg = packet.toString();
     if (msg.indexOf(callsignFilter) === 0) {
-      packetPath = '/packet?packet=' + msg;
+      packet = '/packet?packet=' + msg;
       options = {
         host: env.DOTCLOUD_APRS_HTTP_HOST,
         port: 80,
         method: 'POST',
-        path: packetPath
+        path: '/packet',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Length': Buffer.byteLength(packet)
+        }
       };
       console.log("Requesting packet from perl with %s", msg);
       req = http.request(options, function(res) {
@@ -344,6 +348,7 @@
       req.on('error', function(err) {
         return console.log("HTTP Request Error: %s", err.message);
       });
+      req.write(packet);
       return req.end();
     }
   };

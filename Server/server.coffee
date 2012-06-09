@@ -253,12 +253,16 @@ insertCallback = (err, doc) ->
 processAPRSPacket = (packet) ->
 	msg = packet.toString()
 	if msg.indexOf(callsignFilter) == 0
-		packetPath = '/packet?packet=' + msg;
+		packet = '/packet?packet=' + msg;
 		options = {
 			host: env.DOTCLOUD_APRS_HTTP_HOST,
 			port: 80,
 			method: 'POST',
-			path: packetPath
+			path: '/packet',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Content-Length': Buffer.byteLength packet
+			}
 		}
 
 		console.log "Requesting packet from perl with %s", msg
@@ -269,6 +273,9 @@ processAPRSPacket = (packet) ->
 				processDecodedAPRSPacket packet
 		req.on 'error', (err) ->
 			console.log "HTTP Request Error: %s", err.message
+
+		req.write packet
+
 		req.end()
 
 processDecodedAPRSPacket = (packetData) ->
