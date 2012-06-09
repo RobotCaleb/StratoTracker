@@ -253,7 +253,7 @@ insertCallback = (err, doc) ->
 processAPRSPacket = (packet) ->
 	msg = packet.toString()
 	if msg.indexOf(callsignFilter) == 0
-		packet = '/packet?packet=' + msg;
+		packet = '/packet?packet=' + encodeURIComponent msg
 		options = {
 			host: env.DOTCLOUD_APRS_HTTP_HOST,
 			port: 80,
