@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <link rel="stylesheet" type="text/css" href="css/main.css">
+        <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+		<script type="text/javascript" src="js/dygraph-combined.js"></script>
+		<script type="text/javascript">
+		var g2 = {};
+//<![CDATA[
+		init = function()
+		{
+			g2 = new Dygraph(
+				document.getElementById("chart"),
+				"temp.csv", // path to CSV file
+				{
+					rollPeriod: 2,
+					colors: ["#DC3912", "#FF9900", "#109618", "#3366CC"],
+					strokeWidth: 2,
+					axisLabelColor: "#CCC",
+					labelsSeparateLines: true,
+					labelsDiv: document.getElementById("legend"),
+					legend: 'always',
+
+					underlayCallback: function(canvas, area, g) {
+						var coords = g.toDomCoords(0, 0);
+
+						var splitX = coords[0];
+						var splitY = coords[1];
+
+						var topHeight = splitY - area.y;
+						var bottomHeight = area.h - topHeight;
+
+						canvas.fillStyle = '#282828';
+						canvas.fillRect(area.x, area.y, area.w, topHeight);
+
+						canvas.fillStyle = '#111111';
+						canvas.fillRect(area.x, splitY, area.w, bottomHeight);
+					}
+				}          // options
+			);
+		}
+		//]]>
+		</script>
+		<title></title>
+	</head>
+	<body onload="init()">
+		<div class="container" id='header'>
+			<h1>
+				StratoTracker - Post Launch
+			</h1>
+			<p>
+				The payload was launched and recovered. This page
+				will serve as a log of that day. For now it just
+				contains a chart of the collected data.
+			</p>
+		</div>
+		<div class="container">
+			<div id="legend"></div>
+			<div id="chart"></div>
+		</div>
+	</body>
+</html>
