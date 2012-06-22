@@ -17,11 +17,11 @@ body {
 
 a {
 	font-weight: bold;
-	color: #B13E3D;      
+	color: #595959;      
 }
 
 a:visited {
-	color: #595959;      
+	color: #B13E3D;      
 }
 
 .fullImage {
