@@ -80,6 +80,10 @@ a:visited {
 	position        : relative;
 }
 
+.leftalign {
+	text-align: left;
+}
+
 .thumb {
 	display      : block;
 	border-radius: 5px;

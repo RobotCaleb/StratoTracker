@@ -12,7 +12,7 @@
 		{
 			g2 = new Dygraph(
 				document.getElementById("chart"),
-				"temp.csv", // path to CSV file
+				"BalloonData.csv", // path to CSV file
 				{
 					rollPeriod: 2,
 					colors: ["#DC3912", "#FF9900", "#109618", "#3366CC"],
@@ -50,14 +50,101 @@
 				StratoTracker - Post Launch
 			</h1>
 			<p>
-				The payload was launched and recovered. This page
-				will serve as a log of that day. For now it just
-				contains a chart of the collected data.
+				The payload was launched and successfully recovered. This page
+				is a log of that day.
 			</p>
 		</div>
 		<div class="container">
 			<div id="legend"></div>
 			<div id="chart"></div>
+		</div>
+		<div class="container leftalign">
+			<p>
+				One June 11, 2012 I launched the first of at least three balloons. This first balloon was done as a learning mission. In that regard it was an incredible success. There's only so much you can learn by reading stuff. Sometimes you have to jump in and make all the mistakes yourself.
+			</p>
+			<p>
+				The equipment for this launch consisted of:
+				<ul>
+					<li>One 800 gram HAB balloon from <a href="http://kaymontballoons.com">Kaymont</a></li>
+					<li>One 48" parachute from <a href="http://www.the-rocketman.com/">Ky The Rocketman</a></li>
+					<li>Two styrofoam coolers from a grocery store</li>
+					<li>One Micro-Trak AIO HA from <a href="http://www.byonics.com/mt-aio">Byonics</a></li>
+					<li>Two Thermochron iButton <a href="http://www.youtube.com/watch?v=dXR3YErEoSg#t=127s">devices</a></li>
+					<li>One GoPro HD Hero <a href="http://gopro.com">camera</a></li>
+					<li>Rental of one hydrogen tank</li>
+					<li>String</li>
+					<li>Tape</li>
+					<li>Sundry other bits</a>
+				</ul>
+			</p>
+			<p>
+				In the weeks leading up to the launch date my brother and I were running predictions on <a href="www.habhub.org/predict">habhub.org's (mostly) great predictor</a> in order to determine the best launch site. I was scheduled to travel to the east coast to visit family so we were coordinating the launch for that same period. Initially we intended to go up from Delaware into Pennsylvania but some last minute cajoling pushed us into the middle of the Delaware peninsula. The night of the 10th we determined a launch point of somewhere near Middletown, DE and scheduled it for about 0830 on the morning of the 11th.
+			</p>
+			<p>
+				Once we got to the launch area we scouted around to find a good launch site. My father works in the area and was familiar with an abandoned housing construction site. It turned out to be an ideal launch location as it was a large mowed field without any trees or buildings nearby. We (my brother, my father, a couple of uncles, and my paternal grandfather) went about setting up for the balloon launch. We laid out a tarp, removed the hydrogen tank from the truck, did final assembly on the payload chain, and started filling the balloon.
+			</p>
+			<p>
+				Filling the balloon was mostly stress-free. The wind was low enough as to not cause any major problems and no adverse issues were encountered. We did make sure that no pointy objects were in range of the balloon and ensured that all who touched the balloon wore rubber gloves. (I'm not sure that I'm convinced it's necessary, but better safe than sorry.)
+			</p>
+			<p>
+				The regulator we were using didn't have a functioning inlet pressure gauge so I don't know exactly how much hydrogen we used. Kaymont states 147 ft^3 will get a 4.4 lb payload to 89,000 ft. The tank we rented was supposed to hold 190 ft^3 and we definitely had quite a bit left over. We put the remaining hydrogen to good use:
+				<p style="text-align: center">
+					<iframe width="300" height="168" src="http://www.youtube.com/embed/W1MOFM5zvDg" frameborder="0" allowfullscreen></iframe>
+					<iframe width="300" height="168" src="http://www.youtube.com/embed/O2nqMD17yJI" frameborder="0" allowfullscreen></iframe>
+					<iframe width="300" height="168" src="http://www.youtube.com/embed/WoGczSMVhoc" frameborder="0" allowfullscreen></iframe>
+				</p>
+			</p>
+			<p>
+				We launched the balloon at about 1030 on the morning of the 11th. Really, we launched it twice. The first launch came back down as we didn't have enough hydrogen in it to overcome the payload and the tether line weight. Being tethered in the wind didn't help, either.
+			</p>
+			<p>
+				We brought it back down and added about another pound of lift. This time it did take off. The tether line got snagged as it slipped through the aluminum hook we had, so we had to cut it free. In the video you can see the payload almost collide with the ground right before it shoots off. This occurs at about 11:14 into the onboard video and about halfway through the ground video.
+			</p>
+			<p>
+				Once the balloon was aloft we hurried to load the gear back into the vehicle so we could set out after it. To that end, I had a Chrome Book (CR-48) running <a href="http://www.xastir.org/wiki/Main_Page">Xastir</a>. To the laptop I had my <a href="http://www.powerwerx.com/wouxun-radios/kg-uv3d-dual-band.html">Wouxun KG-UV3D</a> HT connected. The theory there was that I could listen to the packets being sent over 144.390 MHz and pipe them into my laptop, through <a href="http://www.baycom.org/~tom/ham/soundmodem/">soundmodem</a> and Xastir would pick them up and plot the course of the balloon. In practice this worked not at all. The night before I had gotten it configured and working, but it seems to be real picky about the output volume of the HT and the input volume on the soundcard. So, we weren't able to decode the packets ourselves. Fortunately, I was able to tether the laptop to my phone and get on the cellular data network in order to track the balloon through the system I wrote and through <a href="http://aprs.fi">aprs.fi</a>.
+			</p>
+			<p>
+				Unfortunately, the power invertor I was using to power my phone in my brother's truck sucked the battery completely dry when the truck turned off. So we were running blind for most of the day. I was able to call a couple of friends. Together with one of my brother's coworkers they provided us with updates on the balloon's altitude and position. We reported back with our current position and were able to be guided in to where the balloon was coming down.
+			</p>
+			<p>
+				We turned up a road and were informed that the last position report for the balloon put it ahead and to our left and about 2000 feet up. We frantically scanned the sky but were unable to locate it. We continued up to the intersection, then turned left to try to get closer. My brother's friend guided us down a dirt road which we promptly got kicked off of by a less than helpful local. We went next door and the generous couple there allowed us use of their golf cart.
+			</p>
+			<p>
+				We drove all over their property scanning the trees. Meanwhile, my uncle ended up wandering close to the previously mentioned gentleman's land. A young man postured at the edge of their property with his arms crossed and as my uncle returned we heard several rounds of gunfire. I left my phone number with the couple and they promised to call if they found anything. They then directed us to an Amish farm that bordered their property in the direction that we suspected the balloon of landing in.
+			</p>
+			<p>
+				The owner of the property was attending a funeral, so we were unable to get permission to wander their property. By this time I had been able to force a small charge into my phone and get us partially back online. We received a few packet updates on aprs.fi. His son, Andy, took a look at the map and directed us to Mark, whose property it now appeared to be on.
+			</p>
+			<p>
+				We pulled into Mark's driveway and I slowly brought the truck up toward the house so we could scan the trees. As we approach the house my uncle shouts "There it is!" It was hanging from the tree canopy about 40 feet off the ground. I knocked on the door and when they answered I pointed at the balloon and said "Can I go get that?"
+			</p>
+			<p>
+				I explained what we were doing there and what the object in their trees was. They were very interested and Mark's wife gave me a camera so I could get her a "great Facebook status update!"
+			</p>
+			<p>
+				My brother had some tree retrieval gear consisting of a slingshot on the end of a PVC pole, a hook on the end of a pole, and a length of thin rope. We tried for about an hour to shoot the thin rope through the payload line so that we could pull it down, but the slingshot wasn't quite powerful enough to drag the weight of the rope and its guide weight accurately and far enough. Fortunately, my brother is a long-time rock climber and had all of his gear with us for this eventuality.
+			</p>
+			<p>
+				I shot the light rope up and over a limb and we pulled a heavier rope over it. After securing it to a nearby tree my brother proceeded to scale the tree and get latched to the trunk directly across from the dangling payload. He was able to swing a weight rope through the payload line and pull it over. He fastened a rope to the line and dropped it down to me. I pulled the payload straight down out of the tree and recovered my brother.
+			</p>
+			<p>
+				We retrieved the memory card from the camera and put it in Mark's wife's laptop so that I could provide them with a copy as a token of gratitude. Unfortunately, the video ends about 1 hour 20 minutes into the flight. Also, the lens has a lot of condensation develop on it. Apparently the air was too humid and overcame the dessicant I put into the camera enclosure. Further analysis of the time that the video ended and the temperature plots we got from the Thermochrons shows that the camera stopped recording at about the same time that the external temperature reached the lowest point the payload experienced. We suspect it stopped recording due to the battery not being able to maintain high enough output at such low temperatures. The Thermochrons only record to -40C, and, as you can see in the chart below, we were below that (-40C == -40F) for about 25 minutes.
+			</p>
+			<p>
+				At the top of this page you will find an interactive chart plotting altitude, speed, internal, and external temps over time. The highest recorded altitude we received a packet for was 98,858 feet. That's 6,000 feet higher than we projected it would go. It ended up hitting the ground about 19.3 miles from where we launched it after traveling a total distance of about 72 miles. If you have <a href="http://www.google.com/earth/index.html">Google Earth</a> installed, view a plot of the path the balloon took by loading <a href="StratoSphere mk1 - 11JUN2012.kmz">this file</a>.
+			</p>
+			<p style="text-align: center">
+				<a href="https://plus.google.com/photos/107235276879849058634/albums/5756739360891436513"><img src="https://lh3.googleusercontent.com/-nLUvm6FaEWQ/T-QNVH-dGzI/AAAAAAAACQE/sZtQauB5MVs/s494/DSC_5111.JPG">
+				<br/>
+				Here is an album of the radar deflector construction and balloon launch and recovery.</a>
+			</p>
+			<p>
+				Next, we have two videos. The first is of the launch from a bystander's point of view. The second video is a time-condensed video from the GoPro onboard camera. Of particular note is how dark the sky gets towards the end.
+				<p style="text-align: center">
+					<iframe width="236" height="315" src="http://www.youtube.com/embed/9z_2iQt8hgk" frameborder="0" allowfullscreen></iframe>
+					<iframe width="560" height="315" src="http://www.youtube.com/embed/TNGM1pwVCEA" frameborder="0" allowfullscreen></iframe>
+				</p>
+			</p>
 		</div>
 	</body>
 </html>
