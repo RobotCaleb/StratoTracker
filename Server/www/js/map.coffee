@@ -45,7 +45,7 @@ createGraph = ->
             axisLabelColor: "#CCC",
             labelsSeparateLines: true,
             legend: 'always',
-            labels: ['Time', 'Altitude (* 10km)', 'Speed (mph)']
+            labels: ['Time', 'Altitude (km)', 'Speed (mph)']
 
             underlayCallback: (canvas, area, g) ->
                 coords = g.toDomCoords 0, 0
@@ -101,7 +101,7 @@ displayData = (data, first = false) ->
             graphData = []
         for point in points
             if call == "KF5PEP-1"
-                graphData.push [new Date(point.timestamp), point.speed, point.altitude / 1000]
+                graphData.push [new Date(point.timestamp), point.altitude / 1000, point.speed]
                 $('#altitude').text(point.altitude)
                 $('#speed').text(point.speed)
             if point.latitude != 0 && point.longitude != 0
