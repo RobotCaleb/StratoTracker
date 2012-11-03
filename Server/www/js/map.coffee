@@ -5,7 +5,7 @@ vehicleLines  = []
 markers       = []
 graph         = []
 # graphData     = [[{x: 0, y: 0}], [{x: 0, y: 0}]]
-graphData     = []
+graphData     = [[0,0]]
 x_axis        = {}
 y_axis        = {}
 
@@ -26,11 +26,12 @@ $(document).ready ->
 
 initialize = ->
     myOptions = {
-        # center: new google.maps.LatLng(40.027614, -76.008911),
+        center: new google.maps.LatLng(31.1916, -98.71),
         zoom: 8,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+        mapTypeId: google.maps.MapTypeId.TERRAIN
     }
     map = new google.maps.Map $('#map_canvas')[0], myOptions
+    createGraph()
 
 createGraph = ->
     graph = new Dygraph(
@@ -42,9 +43,8 @@ createGraph = ->
             strokeWidth: 2,
             axisLabelColor: "#CCC",
             labelsSeparateLines: true,
-            # labelsDiv: $('#legend')[0],
             legend: 'always',
-            labels: ['Time', 'Altitude', 'Speed']
+            labels: ['Time', 'Altitude (* 10km)', 'Speed (mph)']
 
             underlayCallback: (canvas, area, g) ->
                 coords = g.toDomCoords 0, 0
@@ -96,19 +96,11 @@ displayData = (data, first = false) ->
         }
         path = vehicleLines[call].getPath()
 
-        # graphData = [] if first
+        if first && call == "KF5PEP-1"
+            graphData = []
         for point in points
             if call == "KF5PEP-1"
-                if graphData.length < 360
-                    graphData.push [new Date(point.timestamp), point.speed * 0.621371, point.altitude / 1000]
-                # if first && point == points[0]
-                #     graphData[0][0] = { x: point.timestamp/10000, y: point.altitude / 100 }
-                #     graphData[1][0] = { x: point.timestamp/10000, y: point.speed }
-                # else
-                #     if graphData[0].length < 360
-                #         graphData[0].push { x: point.timestamp/10000, y: point.altitude / 100 }
-                #         graphData[1].push { x: point.timestamp/10000, y: point.speed }
-                #         graphData[1].push { x: point.timestamp/10000, y: point.speed }
+                graphData.push [new Date(point.timestamp), point.speed, point.altitude / 1000]
                 $('#altitude').text(point.altitude)
                 $('#speed').text(point.speed)
             if point.latitude != 0 && point.longitude != 0
@@ -116,11 +108,10 @@ displayData = (data, first = false) ->
                 path.push coords
                 markers[call].setPosition coords
                 bounds.extend coords
-        if (first)
+        if first && call == "KF5PEP-1"
+            graph.destroy()
             createGraph()
-        else
-            graph.updateOptions { file: graphData }
-        # graph.render()
+        graph.updateOptions { file: graphData }
         if first
             map.fitBounds bounds
 

@@ -14,7 +14,7 @@
 
   graph = [];
 
-  graphData = [];
+  graphData = [[0, 0]];
 
   x_axis = {};
 
@@ -42,10 +42,12 @@
   initialize = function() {
     var myOptions;
     myOptions = {
+      center: new google.maps.LatLng(31.1916, -98.71),
       zoom: 8,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
+      mapTypeId: google.maps.MapTypeId.TERRAIN
     };
-    return map = new google.maps.Map($('#map_canvas')[0], myOptions);
+    map = new google.maps.Map($('#map_canvas')[0], myOptions);
+    return createGraph();
   };
 
   createGraph = function() {
@@ -56,7 +58,7 @@
       axisLabelColor: "#CCC",
       labelsSeparateLines: true,
       legend: 'always',
-      labels: ['Time', 'Altitude', 'Speed'],
+      labels: ['Time', 'Altitude (* 10km)', 'Speed (mph)'],
       underlayCallback: function(canvas, area, g) {
         var bottomHeight, coords, splitX, splitY, topHeight;
         coords = g.toDomCoords(0, 0);
@@ -121,12 +123,13 @@
         });
       }
       path = vehicleLines[call].getPath();
+      if (first && call === "KF5PEP-1") {
+        graphData = [];
+      }
       for (_i = 0, _len = points.length; _i < _len; _i++) {
         point = points[_i];
         if (call === "KF5PEP-1") {
-          if (graphData.length < 360) {
-            graphData.push([new Date(point.timestamp), point.speed * 0.621371, point.altitude / 1000]);
-          }
+          graphData.push([new Date(point.timestamp), point.speed, point.altitude / 1000]);
           $('#altitude').text(point.altitude);
           $('#speed').text(point.speed);
         }
@@ -137,13 +140,13 @@
           bounds.extend(coords);
         }
       }
-      if (first) {
+      if (first && call === "KF5PEP-1") {
+        graph.destroy();
         createGraph();
-      } else {
-        graph.updateOptions({
-          file: graphData
-        });
       }
+      graph.updateOptions({
+        file: graphData
+      });
       if (first) {
         _results.push(map.fitBounds(bounds));
       } else {
