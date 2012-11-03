@@ -2,14 +2,24 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>StratoTracker</title>
+		<title>
+			StratoTracker
+		</title>
 		<link rel="stylesheet" type="text/css" href="css/main.css">
-		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCNgYjdXJGC_GrUnoagbnlHRYw2o49kyLs&sensor=false&2"></script>
-		<script type="text/javascript" src=
-		"http://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-		<script type="text/javascript" src=
-		"http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.5/socket.io.min.js"></script>
-		<script type="text/javascript" src="js/date.format.js"></script>
+		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCNgYjdXJGC_GrUnoagbnlHRYw2o49kyLs&amp;sensor=false&amp;2">
+</script>
+		<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.2/jquery.min.js">
+</script>
+		<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.5/socket.io.min.js">
+</script>
+		<script type="text/javascript" src="js/date.format.js">
+</script>
+		<script type="text/javascript" src="js/d3.v2.min.js">
+</script>
+		<script type="text/javascript" src="js/rickshaw.min.js">
+</script>
+		<script type="text/javascript" src="js/dygraph-combined.js">
+</script>
 		<script type="text/javascript" src="js/map.js">
 </script>
 	</head>
@@ -29,12 +39,13 @@
 			</p>
 		</div>
 		<div class="mapcontainer" id="map">
-			<div id="stats">
-				Current altitude: <span id="altitude"></span>
-				&nbsp;&nbsp;
-				Current Speed: <span id="speed"></span>
+			<div id="chart_container">
+				<div id="stats">
+					Current altitude: <span id="altitude"></span> &nbsp;&nbsp; Current Speed: <span id="speed"></span>
+					<div id="stats_chart"></div>
+				</div>
 			</div>
-	    	<div id="map_canvas"></div>
-    	</div>
+			<div id="map_canvas"></div>
+		</div>
 	</body>
 </html>
