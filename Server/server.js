@@ -111,7 +111,7 @@
     return console.log('UDP: Listening on %s:%s', address.address, address.port);
   });
 
-  TCP = net.createConnection(14580, '207.182.41.4');
+  TCP = net.createConnection(14580, 'texas.aprs2.net');
 
   TCP.on('connect', function() {
     var login;
