@@ -4,6 +4,8 @@ Server/images
 *.sublime-workspace
 npm-debug.log
 
+.dotcloud
+
 #################
 ## Eclipse
 #################
