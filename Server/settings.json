@@ -1,12 +1,12 @@
 {
-	"DBUSER"       : "user",
-	"DBPASS"       : "pass",
-	"DBHOST"       : "localhost",
-	"DBPORT"       : 27017,
-	"DBDB"         : "tracker",
+	"DBUSER"         : "user",
+	"DBPASS"         : "pass",
+	"DBHOST"         : "192.168.0.1",
+	"DBPORT"         : 27017,
+	"DBDB"           : "tracker",
 	"BLOGCOLLECTION" : "updates",
 	"APRSCOLLECTION" : "aprs",
-	"PORT_WWW"     : 8080,
-	"UPLOAD_USER"  : "user",
-	"UPLOAD_PASS"  : "pass"
+	"PORT_WWW"       : 8060,
+	"UPLOAD_USER"    : "user",
+	"UPLOAD_PASS"    : "pass"
 }
