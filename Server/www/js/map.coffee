@@ -11,9 +11,10 @@ y_axis        = {}
 
 dateFormat.masks.dateMask = 'ddmmmyy HH:MM';
 
-# $(window).load ->
+$(window).load ->
+    # createGraph()
 
-$(document).ready ->
+# $(document).ready ->
     initialize()
     socket = io.connect '/aprs'
     socket.on 'update', (data) ->
@@ -108,9 +109,7 @@ displayData = (data, first = false) ->
                 path.push coords
                 markers[call].setPosition coords
                 bounds.extend coords
-        if first && call == "KF5PEP-1"
-            graph.destroy()
-            createGraph()
+
         graph.updateOptions { file: graphData }
         if first
             map.fitBounds bounds

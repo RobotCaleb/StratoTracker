@@ -22,7 +22,7 @@
 
   dateFormat.masks.dateMask = 'ddmmmyy HH:MM';
 
-  $(document).ready(function() {
+  $(window).load(function() {
     initialize();
     socket = io.connect('/aprs');
     socket.on('update', function(data) {
@@ -139,10 +139,6 @@
           markers[call].setPosition(coords);
           bounds.extend(coords);
         }
-      }
-      if (first && call === "KF5PEP-1") {
-        graph.destroy();
-        createGraph();
       }
       graph.updateOptions({
         file: graphData
